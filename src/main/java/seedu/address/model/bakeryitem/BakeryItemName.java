@@ -61,4 +61,9 @@ public class BakeryItemName {
     public int hashCode() {
         return itemName.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return this.itemName;
+    }
 }
