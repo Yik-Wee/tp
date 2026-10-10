@@ -274,6 +274,36 @@ The client index refers to the displayed client list. The order index refers to 
 not the consolidated list of all orders. Indices are transient displayed positions, not persistent identifiers.
 Existence checks, order changes, persistence, UI updates, and user-facing help are deferred to model integration.
 No successful data change is claimed by this parsing increment.
+### Adding client orders parsing increment
+
+The current increment recognizes `add-order CONTACT_INDEX i/ITEM_INDEX q/QUANTITY d/DEADLINE`.
+For example: `add-order 1 i/2 q/5 d/2026-10-15`.
+It parses and validates an order request; it does not add or save an order yet.
+Executing a valid request returns `Adding client orders is not available yet. No order has been saved.`
+No data is modified, and no success is reported.
+
+Requirements for this increment:
+
+* Require one client index before the prefixes, and exactly one each of `i/`, `q/`, and `d/`.
+* Accept client and item indices from 1 through `Integer.MAX_VALUE`, consistent with AB3's index representation.
+  Identify which index is invalid in the error message, and reject overflow without an unchecked exception.
+* Accept whole-number quantities from 1 to 9,999 inclusive, as specified in the team's MVP feature notes.
+  The upper bound is a product limit and should be revisited if realistic bakery orders require larger quantities.
+* Accept valid calendar dates in `YYYY-MM-DD` format, including leap days and past dates for record-keeping.
+  Reject impossible dates rather than automatically adjusting them.
+* Accept required prefix fields in any order and ignore surrounding whitespace.
+* Reject missing, duplicate, empty, and malformed fields with usage or field-specific error messages.
+* Keep invalid requests and execution of this parsing preview from modifying existing data.
+
+`AddClientOrderCommandParser` uses the existing argument tokenizer and index parser, plus
+`ParserUtil.parseQuantity` and `ParserUtil.parseDeadline`. `Quantity` and `Deadline` are immutable validated values.
+`AddClientOrderCommand` retains the two indices and these values for later execution integration.
+The indices are transient references to displayed lists, not persistent client or item identifiers.
+
+Deferred work includes checking that the indexed client and item exist, constructing persistent order associations,
+updating the model and storage, displaying orders, and updating user-facing help and instructions when adding orders
+becomes available. Identical orders are intended to be allowed; duplicate-order rejection is not part of this parser.
+Other order commands and list or GUI enhancements are outside this increment.
 
 ## **Appendix: Requirements**
 
