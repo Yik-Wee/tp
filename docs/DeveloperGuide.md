@@ -286,6 +286,27 @@ updating the model and storage, displaying orders, and updating user-facing help
 becomes available. Identical orders are intended to be allowed; duplicate-order rejection is not part of this parser.
 Other order commands and list or GUI enhancements are outside this increment.
 
+### delete-order parsing increment
+
+The current increment recognizes `delete-order CONTACT_INDEX o/ORDER_INDEX`, for example
+`delete-order 1 o/2`, as specified in [issue #38](https://github.com/AY2627S1-CS2103T-F14-3/tp/issues/38).
+It validates and retains the indices in a command; execution is deferred until the order model is integrated.
+Executing a valid request returns `Deleting client orders is not available yet. No order has been deleted.` and leaves existing data unchanged.
+
+Requirements for this increment:
+
+* Require one client index before the prefixes and exactly one `o/` order index.
+* Accept indices from 1 through `Integer.MAX_VALUE`, consistent with AB3's index representation.
+* Accept surrounding whitespace, including tabs, and leading zeros in indices.
+* Reject missing, duplicate, empty, malformed, overflowing, or extra arguments with usage or field-specific errors.
+* Register the command with the top-level parser and verify parsing and safe execution with automated tests.
+
+The client index refers to the displayed client list. The order index refers to that client's own orders,
+not the consolidated list of all orders. Indices are transient displayed positions, not persistent identifiers.
+Existence checks, order changes, persistence, UI updates, and user-facing help are deferred to model integration.
+No successful data change is claimed by this parsing increment.
+
+
 ## **Appendix: Requirements**
 
 ### Product scope
