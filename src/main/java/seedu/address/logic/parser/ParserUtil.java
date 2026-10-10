@@ -11,6 +11,8 @@ import seedu.address.commons.util.StringUtil;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.bakeryitem.BakeryItemName;
 import seedu.address.model.bakeryitem.Price;
+import seedu.address.model.order.Deadline;
+import seedu.address.model.order.Quantity;
 import seedu.address.model.person.Address;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
@@ -146,5 +148,33 @@ public class ParserUtil {
             throw new ParseException(Price.MESSAGE_CONSTRAINTS);
         }
         return Price.fromDollars(trimmedPriceDollars);
+    }
+
+    /**
+     * Parses a whole-number order quantity, trimming surrounding whitespace.
+     *
+     * @throws ParseException If the quantity is not between 1 and 9,999 inclusive.
+     */
+    public static Quantity parseQuantity(String quantity) throws ParseException {
+        requireNonNull(quantity);
+        String trimmedQuantity = quantity.trim();
+        if (!Quantity.isValidQuantity(trimmedQuantity)) {
+            throw new ParseException(Quantity.MESSAGE_CONSTRAINTS);
+        }
+        return new Quantity(Integer.parseInt(trimmedQuantity));
+    }
+
+    /**
+     * Parses an order deadline, trimming surrounding whitespace and accepting past dates.
+     *
+     * @throws ParseException If the deadline is not a valid calendar date in YYYY-MM-DD format.
+     */
+    public static Deadline parseDeadline(String deadline) throws ParseException {
+        requireNonNull(deadline);
+        String trimmedDeadline = deadline.trim();
+        if (!Deadline.isValidDeadline(trimmedDeadline)) {
+            throw new ParseException(Deadline.MESSAGE_CONSTRAINTS);
+        }
+        return new Deadline(trimmedDeadline);
     }
 }
